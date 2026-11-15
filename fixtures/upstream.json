@@ -1,0 +1,46 @@
+{
+  "catalog": {
+    "entry": "/live",
+    "static": "/primary"
+  },
+  "resources": {
+    "/primary": {
+      "file": "primary.bin",
+      "type": "application/dash+xml"
+    },
+    "/live": {
+      "file": "resource-01.bin",
+      "type": "application/dash+xml",
+      "phases": {
+        "1": {
+          "file": null,
+          "body": "<MPD xmlns=\"urn:mpeg:dash:schema:mpd:2011\" type=\"dynamic\" minimumUpdatePeriod=\"PT1S\"><Period id=\"p1\" start=\"PT0S\"><AdaptationSet><Representation id=\"v1\"><SegmentTemplate media=\"segments/$Number$.m4s\" timescale=\"1000\" startNumber=\"0\" presentationTimeOffset=\"500\"><SegmentTimeline><S t=\"500\" d=\"10000\" r=\"0\"/></SegmentTimeline></SegmentTemplate></Representation></AdaptationSet></Period><Period id=\"p2\" start=\"PT20S\"><EventStream schemeIdUri=\"urn:demo:ad\" timescale=\"10\"><Event id=\"7\" presentationTime=\"0\">B</Event></EventStream></Period></MPD>"
+        }
+      }
+    },
+    "/segments/1.m4s": {
+      "file": "resource-02.bin",
+      "type": "video/mp4",
+      "phases": {
+        "1": {
+          "status": 404
+        }
+      }
+    },
+    "/segments/2.m4s": {
+      "file": "resource-03.bin",
+      "type": "video/mp4",
+      "phases": {}
+    },
+    "/segments/p1-1.m4s": {
+      "file": "resource-04.bin",
+      "type": "video/mp4",
+      "phases": {}
+    },
+    "/segments/p1-2.m4s": {
+      "file": "resource-05.bin",
+      "type": "video/mp4",
+      "phases": {}
+    }
+  }
+}
