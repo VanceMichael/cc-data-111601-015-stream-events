@@ -20,3 +20,10 @@ MPEG-DASH 采集范围含 MPD/Period/AdaptationSet/Representation 下 BaseURL、
 - https://dashif.org/Guidelines-TimingModel/
 
 以上是格式或业务词汇的公开依据；本项目明确限定的交换子集以本文及实际资源为准，未要求完整标准实现。元数据和未支持声明应保留可定位的来源，不把未知转换成已确认的空结果。HTTP 来源状态、原件结构和产品接收完整性是不同层次；现有通用收件接口成功只表示该单件已保存。
+
+## 产品实现覆盖（对应上述交换范围）
+
+- 清单：识别 dynamic/static、minimumUpdatePeriod、Period@id/@start；沿 MPD/Period/AdaptationSet/Representation 解析 BaseURL；支持 SegmentList/SegmentURL 与 SegmentTemplate 的 `$Number$`（含 `%0Nd` 宽度）和 SegmentTimeline `S t/d/r`（r>=0）；timescale 与 presentationTimeOffset 同时保留原字符串与数值。`$Time$`、`$Bandwidth$`、缺 media/timeline 等未支持声明进周期 unsupported 清单，不静默丢弃。
+- 片段：只遍历顶层 box 提取 emsg v0/v1，保留 schemeIdUri/value、timescale、id、duration、v0 delta/v1 absolute time、box 偏移与原载荷字节（base64，可 UTF-8 时另给文本）；不解码音视频。
+- 时间：v0 以载体片段在 Period 内最早呈现时间（timeline t 减 presentationTimeOffset）加 delta，v1 按事件 timescale 取绝对 media timeline；输出 BigInt 有理值与十进制秒，无法换算时给 resolvable=false 与原因，原件数值不被改写。
+- 身份与留痕：事件键含来源、Period 键、scheme/value、timescale、id、呈现位置及载体；同 id 跨 Period/scheme 不合并。每轮采集为一个周期，缩窗移出的来源、失败原因、重发布 digest、迟到片段补齐均在台账留痕；来源缺失只产生未验证记录，不产生“无事件”结论。

@@ -15,6 +15,19 @@ export class Store {
     }
     return this;
   }
+  harvestFile() { return join(this.directory, 'harvest.json'); }
+  async loadHarvest() {
+    try { return JSON.parse(await readFile(this.harvestFile(), 'utf8')); }
+    catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+      return null;
+    }
+  }
+  async saveHarvest(state) {
+    const temporary = join(this.directory, `harvest-${randomUUID()}.tmp`);
+    await writeFile(temporary, JSON.stringify(state));
+    await rename(temporary, this.harvestFile());
+  }
   async saveIndex(records) {
     const temporary = join(this.directory, `index-${randomUUID()}.tmp`);
     await writeFile(temporary, JSON.stringify(records));
