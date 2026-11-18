@@ -6,12 +6,15 @@ MPEG-DASH 采集范围含 MPD/Period/AdaptationSet/Representation 下 BaseURL、
 
 ## 当前来源路由
 
-- `/primary`：application/dash+xml
-- `/live`：application/dash+xml
-- `/segments/1.m4s`：video/mp4
+- `/primary`：application/dash+xml（静态）
+- `/live`：application/dash+xml（动态，阶段 0/1/2/3）
+- `/segments/1.m4s`：video/mp4（阶段 1 返回 404）
 - `/segments/2.m4s`：video/mp4
+- `/segments/3.m4s`：video/mp4（默认 404，阶段 2 起发布为不含 emsg 的合法片段）
 - `/segments/p1-1.m4s`：video/mp4
 - `/segments/p1-2.m4s`：video/mp4
+
+阶段语义：0 为初始动态窗口（1/2.m4s，两个 Period）；1 为缩窗（仅 0.m4s 且来源 404）；2 为新节目窗口（新增 p3/p4 Period、迟到的 3.m4s 发布）；3 重新发布与阶段 0 完全相同的 MPD 字节，用于验证重复发布不新增事件。
 
 `/catalog` 提供入口及业务选择。资源字节支持 GET/HEAD、单一 bytes 范围、ETag 和 If-Match，响应不会跨来源重定向。`/_phase` 为联调控制路径，不是产品数据来源，不应由产品自行切换阶段。
 
